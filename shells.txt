@@ -1,0 +1,11 @@
+old:
+basic> var a = if true then 1 else 0
+basic> a
+1
+new:
+basic> var a = if true then 1 else 0
+basic> a
+1
+basic> var b = if true then; 0; 1; else; 0; end
+basic> b
+null
