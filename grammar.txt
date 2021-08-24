@@ -45,6 +45,6 @@ for-expr        : KEYWORD:FOR IDENTIFIER EQ expr KEYWORD:TO expr
 
 while-expr      : KEYWORD:WHILE expr KEYWORD:THEN expr
 
-func-definition : KEYWORD:func IDENTIFIER? LPAREN (IDENTIFIER (COMMA, IDENTIFIER)*)? RPAREN ARROW expr|(NEWLINE statements KEYWORD:END)
+func-definition : KEYWORD:func IDENTIFIER? LPAREN (IDENTIFIER (COMMA, IDENTIFIER)*)? RPAREN (ARROW expr)|(NEWLINE statements KEYWORD:END)
 
 list-expr       : LSQUARE (expr (COMMA, expr)*)? RSQUARE
