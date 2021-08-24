@@ -294,10 +294,10 @@ class Parser:
                 return res.failure(InvalidSyntaxError(self.current_token.pos_start, self.current_token.pos_end, 'Expected end'))
             res.register_advance()
             self.advance()
-            return res.success(ForNode(var_name, start_value, end_value, step_value, body))
+            return res.success(ForNode(var_name, start_value, end_value, step_value, body, True))
         body = res.register(self.expr())
         if res.error: return res
-        return res.success(ForNode(var_name, start_value, end_value, step_value, body))
+        return res.success(ForNode(var_name, start_value, end_value, step_value, body, False))
 
     def while_expr(self):
         res = ParseResult()
@@ -322,11 +322,20 @@ class Parser:
 
         res.register_advance()
         self.advance()
-
+        if self.current_token.matches(TT_NEWLINE):
+            res.register_advance()
+            self.advance()
+            body = res.register(self.statements())
+            if res.error: return res
+            if not self.current_token.matches(TT_KEYWORD, 'end'):
+                return res.failure(InvalidSyntaxError(self.current_token.pos_start, self.current_token.pos_end, 'Expected end'))
+            res.register_advance()
+            self.advance()
+            return res.success(WhileNode(condition, body, True))
         body = res.register(self.expr())
         if res.error: return res
 
-        return res.success(WhileNode(condition, body))
+        return res.success(WhileNode(condition, body, False))
     def if_expr(self):
         res = ParseResult()
         all_cases = res.register(self.if_expr_cases("if"))
