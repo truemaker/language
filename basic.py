@@ -218,12 +218,12 @@ class BaseFunction(Value):
         new_context = Context(self.name, self.context, self.pos_start)
         new_context.symbol_table = SymbolTable(new_context.parent.symbol_table)
         return new_context
-    def check_args(self, arg_names, args):
+    def check_args(self, arg_names, args, context):
         res = RuntimeResult()
         if len(args) > len(arg_names):
-            return res.failure(RTError(self.pos_start, self.pos_end, 'Too many arguments'))
+            return res.failure(RTError(self.pos_start, self.pos_end, 'Too many arguments',context))
         if len(args) < len(arg_names):
-            return res.failure(RTError(self.pos_start, self.pos_end, 'Too few arguments'))
+            return res.failure(RTError(self.pos_start, self.pos_end, 'Too few arguments',context))
         return res.success(None)
     def populate_args(self, arg_names, args, context):
         for i in range(len(args)):
@@ -233,7 +233,7 @@ class BaseFunction(Value):
             context.symbol_table.set(arg_name, arg_value)
     def check_and_populate_args(self, arg_names, args, context):
         res = RuntimeResult()
-        res.register(self.check_args(arg_names, args))
+        res.register(self.check_args(arg_names, args, context))
         if res.error: return res
         self.populate_args(arg_names, args, context)
         return res.success(None)
