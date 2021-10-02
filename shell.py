@@ -1,4 +1,9 @@
+import sys
 import basic
+
+if len(sys.argv) > 1:
+    basic.run(sys.argv[1], 'run("' + sys.argv[1] + '")')
+    sys.exit(0)
 
 while True:
     text = input("basic> ")

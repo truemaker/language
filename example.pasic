@@ -1,6 +1,6 @@
 # Test
 
-func output(i)
+var output = func (i)
     print(i)
 end
 

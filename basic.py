@@ -6,6 +6,7 @@ from tokens import *
 from constants import *
 import math
 import os
+from sys import exit
 
 
 # Runtime Result
@@ -412,7 +413,7 @@ class BuiltinFunction(BaseFunction):
 
     def execute_exit(self, context):
         os.system("cls" if os.name == "nt" else "clear")
-        quit()
+        exit()
 
     execute_exit.arg_names = []
 
