@@ -40,7 +40,7 @@ class Token:
     def __repr__(self):
         if self.value: return f'{self.type}:{self.value}'
         return f'{self.type}'
-    def matches(self, type_, value):
+    def matches(self, type_, value = None):
         return self.type == type_ and self.value == value
 
 class Position:
