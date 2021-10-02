@@ -1,0 +1,17 @@
+# Test
+
+func output(i)
+    print(i)
+end
+
+func hello()
+    print("hello world")
+end
+
+var alias = hello
+
+alias()
+
+for i = 0 to 5 then
+    output(i)
+end

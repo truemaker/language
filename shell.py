@@ -11,5 +11,5 @@ while True:
         if len(result.elements) == 1:
             print(result.elements[0])
         else:
-            print(repr(result))
+            print(str(result))
     # print(text)

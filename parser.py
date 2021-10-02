@@ -119,6 +119,10 @@ class ListNode:
         self.element_nodes = element_nodes
         self.pos_start = pos_start
         self.pos_end = pos_end
+    def __str__(self):
+        return self.element_nodes
+    def __repr__(self):
+        return self.element_nodes.__repr__()
 
 class ReturnNode:
     def __init__(self,node_to_return,pos_start,pos_end):

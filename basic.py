@@ -412,10 +412,25 @@ class BuiltinFunction(BaseFunction):
 
     def execute_exit(self, context):
         os.system("cls" if os.name == "nt" else "clear")
-        exit()
+        quit()
 
     execute_exit.arg_names = []
 
+    def execute_run(self, context):
+        fn = context.symbol_table.get("fn")
+        if not isinstance(fn, String):
+            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "Argument must be a string"))
+        fn = fn.value
+        try:
+            with open(fn, "r") as f:
+                script = f.read()
+        except Exception:
+            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "Could not execute script " + fn))
+        _, error = run(fn, script)
+        if error:
+            return RuntimeResult().failure(error)
+        return RuntimeResult().success(Number.null)
+    execute_run.arg_names = ["fn"]
 
 BuiltinFunction.print = BuiltinFunction("print")
 BuiltinFunction.print_ret = BuiltinFunction("print_ret")
@@ -430,6 +445,7 @@ BuiltinFunction.append = BuiltinFunction("append")
 BuiltinFunction.pop = BuiltinFunction("pop")
 BuiltinFunction.extend = BuiltinFunction("extend")
 BuiltinFunction.exit = BuiltinFunction("exit")
+BuiltinFunction.run = BuiltinFunction("run")
 
 
 class String(Value):
@@ -559,7 +575,7 @@ class Interpreter:
                 return res.success(Number.null if return_null else expr_value)
 
         if node.else_case:
-            else_value = res.register(self.visit(node.else_case, context))
+            else_value = res.register(self.visit(node.else_case[0], context))
             if res.error: return res
             return res.success(else_value)
 
@@ -757,7 +773,7 @@ global_symbol_table.set("append", BuiltinFunction.append)
 global_symbol_table.set("pop", BuiltinFunction.pop)
 global_symbol_table.set("extend", BuiltinFunction.extend)
 global_symbol_table.set("exit", BuiltinFunction.exit)
-
+global_symbol_table.set("run", BuiltinFunction.run)
 
 # RUN
 def run(fn, text):
