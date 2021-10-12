@@ -1,15 +1,37 @@
 import sys
 import basic
 
+help_text = """
+Sub commands:
+    debug - shows the parse tree and the tokens
+    help - shows this help
+    shell - opens a normal shell session
+    run - runs a program
+"""
+
 if len(sys.argv) > 1:
     if sys.argv[1] == 'debug':
         basic.debug = True
         if len(sys.argv) > 2:
             basic.run(sys.argv[1], 'run("' + sys.argv[2] + '")')
             sys.exit(0)
-    else:
-        basic.run(sys.argv[1], 'run("' + sys.argv[1] + '")')
+    elif sys.argv[1] == "help":
+        print(help_text)
         sys.exit(0)
+    elif sys.argv[1] == "shell":
+        pass
+    elif sys.argv[1] == "run":
+        if len(sys.argv) > 2:
+            basic.run(sys.argv[1], 'run("' + sys.argv[1] + '")')
+        else:
+            print("Usage: shell run <filename>\n" + help_text)
+        sys.exit(0)
+    else:
+        print("Usage: shell <subcommand>\n" + help_text)
+        sys.exit(0)
+else:
+    print("Usage: shell <subcommand>\n" + help_text)
+    sys.exit(0)
 
 while True:
     text = input("basic> ")
