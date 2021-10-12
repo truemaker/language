@@ -22,7 +22,7 @@ if len(sys.argv) > 1:
         pass
     elif sys.argv[1] == "run":
         if len(sys.argv) > 2:
-            basic.run(sys.argv[1], 'run("' + sys.argv[1] + '")')
+            basic.run(sys.argv[1], 'run("' + sys.argv[2] + '")')
         else:
             print("Usage: shell run <filename>\n" + help_text)
         sys.exit(0)
