@@ -20,9 +20,7 @@ while True:
         print(err.as_string())
     elif result:
         if len(result.elements) == 1:
-            if not basic.debug:
-                print(result.elements[0])
+            print(result.elements[0])
         else:
-            if not basic.debug: 
-                print(str(result))
+            print(str(result))
     # print(text)
