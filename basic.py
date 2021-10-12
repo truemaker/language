@@ -753,6 +753,8 @@ Number.NaN = Number(math.nan)
 Number.Infinity = Number(math.inf)
 Number.PI = Number(math.pi)
 
+debug = False
+
 global_symbol_table = SymbolTable()
 global_symbol_table.set("null", Number.null)
 global_symbol_table.set("true", Number.true)
@@ -781,9 +783,13 @@ def run(fn, text):
     lexer = Lexer(fn, text)
     tokens, error = lexer.make_tokens()
     if error: return None, error
+    if debug:
+        print(str(tokens))
     parser = Parser(tokens)
     ast = parser.parse()
     if ast.error: return None, ast.error
+    if debug:
+        print(repr(ast.node))
     interpreter = Interpreter()
     context = Context("<program>")
     context.symbol_table = global_symbol_table
