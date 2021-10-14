@@ -603,7 +603,7 @@ class Interpreter:
         elif node.op_tok.type == TT_MUL:
             result, error = left.multed_by(right)
         elif node.op_tok.type == TT_DIV:
-            result, error = left.divided_by(right)
+            result, error = left.dived_by(right)
         elif node.op_tok.type == TT_POW:
             result, error = left.powed_by(right)
         elif node.op_tok.type == TT_EE:

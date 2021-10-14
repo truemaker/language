@@ -1,5 +1,11 @@
 # Test
 
+func a(x,y) -> x/y
+func b(x,y) -> a(x,y)
+func c(x,y) -> b(x,y)
+func d(x,y) -> c(x,y)
+func e(x,y) -> d(x,y)
+
 var output = func (i)
     print(i)
 end
