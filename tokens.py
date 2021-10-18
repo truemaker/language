@@ -25,6 +25,7 @@ TT_GTE          = 'GTE'
 TT_COMMA        = 'COMMA'
 TT_ARROW        = 'ARROW'
 TT_NEWLINE      = 'NEWLINE'
+TT_PREPROCESS   = 'PREPROCESS'
 TT_EOF          = 'EOF'
 
 class Token:
@@ -150,7 +151,9 @@ class Lexer:
                 identifier += self.current_char
                 self.advance()
             if identifier in KEYWORDS:
-                tok_type = TT_KEYWORD 
+                tok_type = TT_KEYWORD
+            elif identifier in PREPROCESSING_DIRECTIVES:
+                tok_type = TT_PREPROCESS
             else:
                 tok_type = TT_IDENTIFIER
             return Token(tok_type, identifier, pos_start,self.pos)

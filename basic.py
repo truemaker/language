@@ -1,4 +1,5 @@
 # IMPORTS
+from preprocessor import *
 from strings_with_arrows import *
 from errors import *
 from parser import Parser
@@ -378,7 +379,7 @@ class BuiltinFunction(BaseFunction):
         list = context.symbol_table.get("list")
         value = context.symbol_table.get("value")
         if not isinstance(list, List):
-            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "First argument must be a list"))
+            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "First argument must be a list", context))
         list.elements.append(value)
         return RuntimeResult().success(Number.null)
 
@@ -388,13 +389,13 @@ class BuiltinFunction(BaseFunction):
         list = context.symbol_table.get("list")
         index = context.symbol_table.get("index")
         if not isinstance(list, List):
-            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "First argument must be a list"))
+            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "First argument must be a list", context))
         if not isinstance(index, Number):
-            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "Second argument must be a number"))
+            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "Second argument must be a number", context))
         try:
             element = list.elements.pop(index)
         except:
-            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, f"Index out of range"))
+            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, f"Index out of range", context))
         return RuntimeResult().success(element)
 
     execute_pop.arg_names = ["list", "index"]
@@ -403,9 +404,9 @@ class BuiltinFunction(BaseFunction):
         list = context.symbol_table.get("list")
         value = context.symbol_table.get("value")
         if not isinstance(list, List):
-            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "First argument must be a list"))
+            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "First argument must be a list", context))
         if not isinstance(value, List):
-            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "Second argument must be a list"))
+            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "Second argument must be a list", context))
         list.elements.extend(value.elements)
         return RuntimeResult().success(Number.null)
 
@@ -420,14 +421,14 @@ class BuiltinFunction(BaseFunction):
     def execute_run(self, context):
         fn = context.symbol_table.get("fn")
         if not isinstance(fn, String):
-            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "Argument must be a string"))
+            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "Argument must be a string", context))
         fn = fn.value
         try:
             with open(fn, "r") as f:
                 script = f.read()
         except Exception:
-            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "Could not execute script " + fn))
-        _, error = run(fn, script)
+            return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "Could not execute script " + fn, context))
+        _, error = run(fn, script, context)
         if error:
             return RuntimeResult().failure(error)
         return RuntimeResult().success(Number.null)
@@ -779,10 +780,12 @@ global_symbol_table.set("exit", BuiltinFunction.exit)
 global_symbol_table.set("run", BuiltinFunction.run)
 
 # RUN
-def run(fn, text):
+def run(fn, text, parent=None):
     lexer = Lexer(fn, text)
     tokens, error = lexer.make_tokens()
     if error: return None, error
+    preprocessor = Preprocessor()
+    tokens = preprocessor.preprocess(tokens)
     if debug:
         print(str(tokens))
     parser = Parser(tokens)
@@ -791,7 +794,7 @@ def run(fn, text):
     if debug:
         print(repr(ast.node))
     interpreter = Interpreter()
-    context = Context("<program>")
+    context = Context("<program>", parent)
     context.symbol_table = global_symbol_table
     result = interpreter.visit(ast.node, context)
     return result.value, result.error

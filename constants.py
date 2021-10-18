@@ -20,3 +20,7 @@ KEYWORDS = ["var",
             "continue",
             "break"
             ]
+
+PREPROCESSING_DIRECTIVES = ["equals",
+                            "import"
+                            ]

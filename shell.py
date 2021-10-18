@@ -30,7 +30,7 @@ if len(sys.argv) > 1:
         print("Usage: shell <subcommand>\n" + help_text)
         sys.exit(0)
 else:
-    print("Usage: shell <subcommand>\n" + help_text)
+    print("Usage: " + sys.argv[0] +" <subcommand>\n" + help_text)
     sys.exit(0)
 
 while True:

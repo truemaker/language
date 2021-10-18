@@ -104,7 +104,8 @@ class FunctionDefinitionNode:
 
 
 class CallNode:
-    def __init__(self, node_to_call, arg_toks):
+    def __init__(self, node_to_call, arg_toks, name=None):
+        self.name = name
         self.node_to_call = node_to_call
         self.arg_toks = arg_toks
         self.pos_start = self.node_to_call.pos_start

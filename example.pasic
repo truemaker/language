@@ -1,5 +1,7 @@
 # Test
 
+import("some_module.pasic")
+
 func a(x,y) -> x/y
 func b(x,y) -> a(x,y)
 func c(x,y) -> b(x,y)
@@ -17,6 +19,7 @@ end
 var alias = hello
 
 alias()
+hi()
 
 for i = 0 to 5 then
     output(i)
