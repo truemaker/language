@@ -18,9 +18,15 @@ end
 
 var alias = hello
 
+func test1()
+return 10
+end
+
 alias()
 hi()
 
+var test = test1()
+print(test)
 for i = 0 to 5 then
     output(i)
 end
