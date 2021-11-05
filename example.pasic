@@ -2,18 +2,28 @@
 
 import("some_module.pasic")
 
-func a(x,y) -> x/y
-func b(x,y) -> a(x,y)
-func c(x,y) -> b(x,y)
-func d(x,y) -> c(x,y)
-func e(x,y) -> d(x,y)
+func a(x,y)
+return x/y
+end
+func b(x,y)
+return a(x,y)
+end
+func c(x,y)
+return b(x,y)
+end
+func d(x,y)
+return c(x,y)
+end
+func e(x,y)
+return d(x,y)
+end
 
 var output = func (i)
     print(i)
 end
 
 func hello()
-    print("hello world")
+print("hello world")
 end
 
 var alias = hello
@@ -24,9 +34,4 @@ end
 
 alias()
 hi()
-
-var test = test1()
-print(test)
-for i = 0 to 5 then
-    output(i)
-end
+var i = e(10,0)

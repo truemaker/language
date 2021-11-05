@@ -9,6 +9,7 @@ TT_MINUS        = 'MINUS'
 TT_MUL          = 'MUL'
 TT_DIV          = 'DIV'
 TT_POW          = 'POW'
+TT_MODULO       = 'MODULO'
 TT_LPAREN       = 'LPAREN'
 TT_RPAREN       = 'RPAREN'
 TT_LSQUARE      = 'LSQUARE'
@@ -120,6 +121,9 @@ class Lexer:
                                 self.advance()
                         elif self.current_char == '^':
                             tokens.append(Token(TT_POW, pos_start=self.pos))
+                            self.advance()
+                        elif self.current_char == '%':
+                            tokens.append(Token(TT_MODULO, pos_start=self.pos))
                             self.advance()
                         elif self.current_char == '=':
                             tokens.append(self.make_equals()) # Token(TT_EQUALS, pos_start=self.pos))

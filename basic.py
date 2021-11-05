@@ -34,7 +34,7 @@ class RuntimeResult:
         return self
     def success_return(self, value):
         self.reset()
-        self.return_value = value
+        self.func_return_value = value
         return self
     def success_continue(self):
         self.reset()
@@ -50,7 +50,10 @@ class RuntimeResult:
         return self
     def should_return(self):
         return (
-            self.error or self.func_return_value or self.loop_should_continue or self.loop_should_break
+            self.error or
+            self.func_return_value or
+            self.loop_should_continue or
+            self.loop_should_break
         )
 
 
@@ -91,6 +94,9 @@ class Value:
         return None, self.illegal_operation(other)
 
     def powed_by(self, other):
+        return None, self.illegal_operation(other)
+
+    def modulo(self, other):
         return None, self.illegal_operation(other)
 
     def get_comparison_eq(self, other):
@@ -182,7 +188,11 @@ class Number(Value):
             return Number(self.value ** other.value).set_context(self.context), None
         else:
             return None, Value.illegal_operation(self, other)
-
+    def modulo(self, other):
+        if isinstance(other, Number):
+            return Number(self.value % other.value).set_context(self.context), None
+        else:
+            return None, Value.illegal_operation(self, other)
     def get_comparison_eq(self, other):
         if isinstance(other, Number):
             return Number(int(self.value == other.value)).set_context(self.context), None
@@ -295,8 +305,9 @@ class Function(BaseFunction):
         res.register(self.check_and_populate_args(self.arg_names, args, new_context))
         if res.should_return() and res.func_return_value == None: return res
         value = res.register(interpreter.visit(self.body_node, new_context))
-        if res.should_return() and res.func_return_value == None: return res
-        ret_value = (value if self.should_auto_return else None) or res.func_return_value or Number.null
+        if res.should_return() and res.func_return_value == None: return res # (value if self.should_auto_return else None) or
+        if res.error: return res.failure(res.error)
+        ret_value = res.func_return_value or Number.null
         return res.success(ret_value)
 
     def copy(self):
@@ -457,6 +468,7 @@ class BuiltinFunction(BaseFunction):
             return RuntimeResult().failure(RTError(self.pos_start, self.pos_end, "Could not execute script " + fn, context))
         _, error = run(fn, script, context)
         if error:
+            print(error.as_string())
             return RuntimeResult().failure(error)
         return RuntimeResult().success(Number.null)
     execute_run.arg_names = ["fn"]
@@ -634,6 +646,8 @@ class Interpreter:
             result, error = left.dived_by(right)
         elif node.op_tok.type == TT_POW:
             result, error = left.powed_by(right)
+        elif node.op_tok.type == TT_MODULO:
+            result, error = left.modulo(right)
         elif node.op_tok.type == TT_EE:
             result, error = left.get_comparison_eq(right)
         elif node.op_tok.type == TT_NE:
@@ -781,6 +795,7 @@ class Interpreter:
         elements = []
         for element_node in node.element_nodes:
             elements.append(res.register(self.visit(element_node, context)))
+            if res.error: return res
         return res.success(List(elements).set_context(context).set_pos(node.pos_start, node.pos_end))
     def visit_ReturnNode(self, node, context):
         res = RuntimeResult()

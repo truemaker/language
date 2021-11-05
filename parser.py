@@ -50,6 +50,8 @@ class VarAssingNode:
         self.value = value
         self.pos_start = value.pos_start
         self.pos_end = value.pos_end
+    def __repr__(self):
+        return f'({self.name_tok} = {self.value})'
 
 
 class VarAccessNode:
@@ -57,6 +59,8 @@ class VarAccessNode:
         self.name_tok = name
         self.pos_start = name.pos_start
         self.pos_end = name.pos_end
+    def __repr__(self):
+        return f'({self.name_tok})'
 
 
 class IfNode:
@@ -101,6 +105,8 @@ class FunctionDefinitionNode:
             self.pos_start = self.body_node.pos_start
         self.pos_end = self.body_node.pos_end
         self.should_auto_return = should_auto_return
+    def __repr__(self):
+        return f'({self.var_name_tok} : {self.body_node.__repr__()})'
 
 
 class CallNode:
@@ -113,6 +119,8 @@ class CallNode:
             self.pos_end = self.arg_toks[len(self.arg_toks) - 1].pos_end
         else:
             self.pos_end = self.node_to_call.pos_end
+    def __repr__(self):
+        return f'({self.node_to_call.__repr__()} : {self.arg_toks})'
 
 
 class ListNode:
@@ -130,6 +138,8 @@ class ReturnNode:
         self.node_to_return = node_to_return
         self.pos_start = pos_start
         self.pos_end = pos_end
+    def __repr__(self):
+        return f'({self.node_to_return})'
 
 class ContinueNode:
     def __init__(self, pos_start, pos_end):
@@ -532,7 +542,7 @@ class Parser:
         return self.power()
 
     def term(self):
-        return self.bin_op(self.factor, (TT_MUL, TT_DIV))
+        return self.bin_op(self.factor, (TT_MUL, TT_DIV, TT_MODULO))
 
     def arith_expr(self):
         return self.bin_op(self.term, (TT_PLUS, TT_MINUS))
