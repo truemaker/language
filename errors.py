@@ -40,9 +40,9 @@ class RTError(Error):
 
         while ctx:
             if pos:
-                result = f'    File {pos.fn}, line {str(pos.ln + 1)}, in {ctx.display_name}\n' + result
+                result += f'    File {pos.fn}, line {str(pos.ln + 1)}, in Function {ctx.display_name}\n'
             else:
-                result = f'    In {ctx.display_name}\n' + result
+                result += f'    In Built-In Function {ctx.display_name}\n'
             pos = ctx.parent_entry_pos
             ctx = ctx.parent
         return "Stacktrace:\n" + result
